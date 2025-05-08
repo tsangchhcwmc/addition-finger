@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>手指加法遊戲</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #333;
+    }
+    .game-container {
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+    }
+    .hands {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+    .hands img {
+      width: 150px;
+      margin: 0 10px;
+    }
+    .question {
+      font-size: 1.5em;
+      margin: 20px 0;
+    }
+    .answers {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .answer-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .answer-option span {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    .answers button {
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      transition: background-color 0.3s;
+    }
+    .answers button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      font-size: 1.2em;
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    <h1>手指加法遊戲</h1>
+    <div class="hands">
+      <img id="left-hand" src="" alt="左手">
+      <img id="right-hand" src="" alt="右手">
+    </div>
+    <div class="question" id="question">請回答：</div>
+    <div class="answers" id="answers"></div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    // 圖片路徑設定
+    const handImages = [
+      "hand_0.png", // 0 fingers
+      "hand_1.png", // 1 finger
+      "hand_2.png", // 2 fingers
+      "hand_3.png", // 3 fingers
+      "hand_4.png", // 4 fingers
+      "hand_5.png"  // 5 fingers
+    ];
+
+    const leftHand = document.getElementById("left-hand");
+    const rightHand = document.getElementById("right-hand");
+    const question = document.getElementById("question");
+    const answersContainer = document.getElementById("answers");
+    const result = document.getElementById("result");
+
+    function generateRandomNumber(max) {
+      return Math.floor(Math.random() * (max + 1));
+    }
+
+    function startGame() {
+      // 隨機生成手指數量
+      const leftHandFingers = generateRandomNumber(5);
+      const rightHandFingers = generateRandomNumber(5);
+
+      // 設定手圖片
+      leftHand.src = handImages[leftHandFingers];
+      rightHand.src = handImages[rightHandFingers];
+
+      // 計算正確答案
+      const correctAnswer = leftHandFingers + rightHandFingers;
+
+      // 更新問題文字
+      question.textContent = `請計算：${leftHandFingers} + ${rightHandFingers} = ?`;
+
+      // 生成答案選項（包含正確答案）
+      const answers = new Set();
+      answers.add(correctAnswer);
+      while (answers.size < 4) {
+        answers.add(generateRandomNumber(10));
+      }
+
+      // 顯示答案選項
+      const labels = ["A", "B", "C", "D"];
+      answersContainer.innerHTML = "";
+      Array.from(answers).sort(() => Math.random() - 0.5).forEach((answer, index) => {
+        const answerOption = document.createElement("div");
+        answerOption.classList.add("answer-option");
+
+        const label = document.createElement("span");
+        label.textContent = labels[index];
+
+        const button = document.createElement("button");
+        button.textContent = answer;
+        button.onclick = () => {
+          if (answer === correctAnswer) {
+            result.textContent = "正確！";
+            result.style.color = "green";
+            setTimeout(startGame, 1500); // 1.5 秒後重新開始
+          } else {
+            result.textContent = "錯誤，請再試一次！";
+            result.style.color = "red";
+          }
+        };
+
+        answerOption.appendChild(label);
+        answerOption.appendChild(button);
+        answersContainer.appendChild(answerOption);
+      });
+
+      // 清除之前的結果
+      result.textContent = "";
+    }
+
+    // 頁面加載時啟動遊戲
+    startGame();
+  </script>
+
+</body>
+</html>
